@@ -80,12 +80,12 @@ class ColeccionRepository:
         if coleccion is None:
             return None
         
-        pelicula = db.query(Pelicula).filter(Pelicula.id == pelicula_id).first()
+        pelicula = db.query(Pelicula).filter(Pelicula.id_pelicula == pelicula_id).first()
         if pelicula is None:
             return None
         
         # Remover la película de la colección
-        if pelicula in coleccion.peliculas:
+        if pelicula in coleccion.coleccion_peliculas:
             coleccion.peliculas.remove(pelicula)
             db.commit()
             db.refresh(coleccion)

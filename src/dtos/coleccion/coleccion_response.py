@@ -9,7 +9,7 @@ class ColeccionResponseDTO(BaseModel):
     id_coleccion: int
     nombre : str
     coleccion_created_at: datetime
-    coleccion_updated_at: datetime
+    coleccion_update_at: datetime
 
 class Config:
         from_attributes = True
