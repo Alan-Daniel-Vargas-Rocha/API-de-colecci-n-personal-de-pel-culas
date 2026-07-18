@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from src.models.coleccion_pelicula import ColeccionPelicula
+from datetime import datetime, timezone
 
 class ColeccionPeliculaRepository:
     
@@ -34,8 +35,9 @@ class ColeccionPeliculaRepository:
         if coleccion_pelicula is None:
             return None
         
-        coleccion_pelicula.fecha_agregado = data.fecha_agregado
         coleccion_pelicula.opinion = data.opinion
+        coleccion_pelicula.calificacion = data.calificacion
+        coleccion_pelicula.coleccion_pelicula_update_at = datetime.now(timezone.utc)
 
         db.commit()
         db.refresh(coleccion_pelicula)

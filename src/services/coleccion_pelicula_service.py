@@ -46,33 +46,42 @@ class ColeccionPeliculaService:
         return ColeccionPeliculaRepository.create_coleccion_pelicula(data = data, db = db)
     
     @staticmethod
-    def update_coleccion_pelicula(dto: ColeccionPeliculaUpdateDTO, db: Session):
-        # Create data
-        data = ColeccionPelicula(
-            id_coleccion = int,
-            pelicula_id = int,
+    def update_coleccion_pelicula(
+        coleccion_id: int,
+        pelicula_id: int,
+        dto: ColeccionPeliculaUpdateDTO,
+        db: Session
+    ):
+    # 1. Buscar la relación
+        coleccion_pelicula = ColeccionPeliculaService.find_coleccion_pelicula(
+            coleccion_id=coleccion_id,
+            pelicula_id=pelicula_id,
+            db=db
         )
-        
-        # Actualizar solo la opinión (es lo único que se puede modificar)
+    
+    # 2. Actualizar campos
         if dto.opinion is not None:
             coleccion_pelicula.opinion = dto.opinion
-            
-        # Update collection movie
-        coleccion_pelicula = ColeccionPeliculaRepository.update_coleccion_pelicula(data = data, db = db)
-        
-        # Guardar cambios
+        if dto.calificacion is not None:
+            coleccion_pelicula.calificacion = dto.calificacion
+    
+    # 3. Actualizar timestamp
+        coleccion_pelicula.coleccion_pelicula_update_at = datetime.now(timezone.utc)
+    
+    # 4. Guardar
         db.commit()
         db.refresh(coleccion_pelicula)
+    
         return coleccion_pelicula
 
     @staticmethod
     def delete_coleccion_pelicula(coleccion_id: int, pelicula_id: int, db: Session):
     # Primero buscar el registro existente
         coleccion_pelicula = ColeccionPeliculaService.find_coleccion_pelicula(
-        coleccion_id=coleccion_id,
-        pelicula_id=pelicula_id,
-        db=db
-    )
+            coleccion_id=coleccion_id,
+            pelicula_id=pelicula_id,
+            db=db
+        )
     
     # Eliminar el registro
         db.delete(coleccion_pelicula)

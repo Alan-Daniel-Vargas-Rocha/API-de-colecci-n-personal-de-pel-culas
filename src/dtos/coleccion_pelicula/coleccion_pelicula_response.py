@@ -9,6 +9,7 @@ class ColeccionPeliculaResponseDTO(BaseModel):
     pelicula_id: int
     fecha_agregado: datetime
     opinion: Optional[str] = None
+    calificacion: Optional[int] = None
     coleccion_pelicula_created_at: datetime
     coleccion_pelicula_update_at: datetime
     

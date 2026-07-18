@@ -49,6 +49,11 @@ class ColeccionPelicula(Base):
         onupdate=datetime.utcnow
     )
     
+    calificacion = Column(
+        Integer,
+        nullable=True
+    )
+    
     # Relaciones
     coleccion = relationship("Coleccion", back_populates="coleccion_peliculas")
     pelicula = relationship("Pelicula", back_populates="coleccion_peliculas")
