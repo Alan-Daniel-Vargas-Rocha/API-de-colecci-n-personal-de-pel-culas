@@ -1,0 +1,28 @@
+# Entorno virtual (NO subir a GitHub)
+.venv/
+venv/
+env/
+ENV/
+
+# Archivos de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Archivos de base de datos
+*.db
+*.sqlite3
+
+# Variables de entorno
+.env
+*.env
+
+# IDE (si usas VS Code, PyCharm, etc.)
+.vscode/
+.idea/
+*.iml
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
