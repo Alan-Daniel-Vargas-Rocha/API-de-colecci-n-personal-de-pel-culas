@@ -1,0 +1,132 @@
+/* Icon button */
+
+.icon-button,
+.icon-button-primary,
+.icon-button-danger {
+    background-color: transparent;
+    border-radius: 99px;
+    border: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    outline: none;
+}
+
+/* Icon button: default */
+.icon-button {
+    color: #424242;
+}
+
+.icon-button:hover {
+    background-color: #F5F5F5;
+}
+
+.icon-button > i {
+    color: #424242;
+}
+
+/* Icon button: primary */
+.icon-button-primary {
+    color: var(--primary-color);
+}
+
+.icon-button-primary:hover {
+    background-color: var(--background-secondary);
+}
+
+.icon-button-primary > i {
+    color: var(--primary-color);
+}
+
+/* Solid button */
+.solid-primary-button,
+.solid-danger-button {
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    height: 36px;
+    gap: 8px;
+    outline: none;
+    padding: 0px 16px;
+}
+
+/* Solid button: primary */
+.solid-primary-button {
+    color: #FFFFFF;
+    background-color: var(--primary-color);
+}
+
+.solid-primary-button:hover {
+    background-color: var(--hover-primary);
+}
+
+.solid-primary-button > i {
+    color: #FFFFFF;
+}
+
+/* Solid button: danger */
+.solid-danger-button {
+    color: #FFFFFF;
+    background-color: var(--danger-color);
+}
+
+.solid-danger-button:hover {
+    background-color: var(--hover-danger);
+}
+
+.solid-danger-button > i {
+    color: #FFFFFF;
+}
+
+/* Outlined button */
+.outlined-primary-button,
+.outlined-danger-button {
+    border-radius: 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    height: 36px;
+    gap: 8px;
+    outline: none;
+    padding: 0px 16px;
+}
+
+/* Outlined button: primary */
+.outlined-primary-button {
+    color: var(--primary-color);
+    background-color: #FFFFFF;
+    border: 1px solid var(--primary-color);
+}
+
+.outlined-primary-button:hover {
+    background-color: var(--background-secondary);
+}
+
+.outlined-primary-button > i {
+    color: var(--primary-color);
+}
+
+/* Outlined button: danger */
+.outlined-danger-button {
+    color: var(--danger-color);
+    background-color: #FFFFFF;
+    border: 1px solid var(--danger-color);
+}
+
+.outlined-danger-button:hover {
+    background-color: var(--background-danger);
+}
+
+.outlined-danger-button > i {
+    color: var(--danger-color);
+}
