@@ -7,7 +7,9 @@ from src.routes import (
     pelicula_apy,
     coleccion_apy,
     usuario_apy,
-    coleccion_pelicula_apy
+    coleccion_pelicula_apy,
+    serie_apy,
+    coleccion_serie
 )
 
 app = FastAPI()
@@ -25,3 +27,5 @@ app.include_router(pelicula_apy.router)
 app.include_router(coleccion_apy.router)
 app.include_router(usuario_apy.router)
 app.include_router(coleccion_pelicula_apy.router)
+app.include_router(serie_apy.router)
+app.include_router(coleccion_serie.router)
