@@ -36,3 +36,4 @@ class Usuario(Base):
     
     # Relación con colecciones
     colecciones = relationship("Coleccion", back_populates="usuario", cascade="all, delete-orphan")
+    favoritos = relationship("Favorito", back_populates="usuario")  

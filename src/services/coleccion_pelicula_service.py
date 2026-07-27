@@ -39,7 +39,9 @@ class ColeccionPeliculaService:
             id_coleccion = dto.id_coleccion,
             pelicula_id = dto.pelicula_id,
             fecha_agregado = datetime.now(timezone.utc),
-            opinion = dto.opinion
+            opinion = dto.opinion,
+            calificacion = dto.calificacion,
+            nombre_personalizado = dto.nombre_personalizado
         )
         
         # Return result
@@ -64,6 +66,8 @@ class ColeccionPeliculaService:
             coleccion_pelicula.opinion = dto.opinion
         if dto.calificacion is not None:
             coleccion_pelicula.calificacion = dto.calificacion
+        if dto.nombre_personalizado is not None:  
+            coleccion_pelicula.nombre_personalizado = dto.nombre_personalizado
     
     # 3. Actualizar timestamp
         coleccion_pelicula.coleccion_pelicula_update_at = datetime.now(timezone.utc)

@@ -1,18 +1,24 @@
-from pydantic import BaseModel, Field
+"""
+DTO para la respuesta de una relación colección-película.
+
+Incluye todos los campos de la relación para mostrar al usuario.
+"""
+from pydantic import BaseModel
 from datetime import datetime
-from decimal import Decimal
 from typing import Optional
 
-# DTO para la respuesta de un producto
 class ColeccionPeliculaResponseDTO(BaseModel):
+  
+    
+    id_coleccion_pelicula: int
     id_coleccion: int
     pelicula_id: int
     fecha_agregado: datetime
     opinion: Optional[str] = None
     calificacion: Optional[int] = None
+    nombre_personalizado: Optional[str] = None
     coleccion_pelicula_created_at: datetime
     coleccion_pelicula_update_at: datetime
     
-     
-class Config:
-    from_attributes = True
+    class Config:
+        from_attributes = True

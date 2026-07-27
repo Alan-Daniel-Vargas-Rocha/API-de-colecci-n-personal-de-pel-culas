@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from src.config.database import Base
-from datetime import datetime
+from datetime import datetime, timezone
 
 class Pelicula(Base):
     __tablename__ = "pelicula"
@@ -16,7 +16,7 @@ class Pelicula(Base):
     titulo = Column(
         String(32),
         nullable=False
-     )
+    )
     
     año = Column(
         Integer,
@@ -31,17 +31,19 @@ class Pelicula(Base):
     pelicula_created_at = Column(
         DateTime,
         nullable=False,
-        default=datetime.utcnow
+        default=datetime.now(timezone.utc)
     )
     
     pelicula_updated_at = Column(
         DateTime,
         nullable=False,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
+        default=datetime.now(timezone.utc),
+        onupdate=datetime.now(timezone.utc)
     )
     
-    # Relación con coleccion_pelicula
-    coleccion_peliculas = relationship("ColeccionPelicula", back_populates="pelicula", cascade="all, delete-orphan")
-    
-    
+    # Relación con ColeccionPelicula
+    coleccion_peliculas = relationship(
+        "ColeccionPelicula",
+        back_populates="pelicula",
+        cascade="all, delete-orphan"
+    )

@@ -32,9 +32,9 @@ router = APIRouter(
 def get_colecciones_peliculas(db: Session = Depends(get_db)):
     return ColeccionPeliculaService.get_colecciones_peliculas(db=db)
 
-@router.get("/{coleccion_id}", response_model = ColeccionPeliculaResponseDTO, status_code = status.HTTP_200_OK)
-def find_coleccion_pelicula(coleccion_id: int, db: Session = Depends(get_db)):
-    return ColeccionPeliculaService.find_coleccion_pelicula(coleccion_id = coleccion_id, db = db)
+@router.get("/{coleccion_id}/{pelicula_id}", response_model = ColeccionPeliculaResponseDTO, status_code = status.HTTP_200_OK)
+def find_coleccion_pelicula(coleccion_id: int, pelicula_id: int, db: Session = Depends(get_db)):
+    return ColeccionPeliculaService.find_coleccion_pelicula(coleccion_id = coleccion_id, pelicula_id= pelicula_id, db = db)
 
 @router.post("/", response_model = ColeccionPeliculaResponseDTO, status_code = status.HTTP_201_CREATED)
 def create_coleccion_pelicula(data: ColeccionPeliculaCreateDTO, db: Session = Depends(get_db)):

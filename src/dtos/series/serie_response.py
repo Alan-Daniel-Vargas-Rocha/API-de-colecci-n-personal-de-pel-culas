@@ -6,10 +6,13 @@ from typing import Optional
 class SerieResponseDTO(BaseModel):
     id_serie: int
     titulo: str
-    año_inicio: Optional[int]
-    año_fin: Optional[int]
     genero: str
-    temporadas: Optional[int]
+    año_inicio: Optional[int] = None
+    año_fin: Optional[int] = None
+    temporadas: Optional[int] = None
+    episodios: Optional[int] = None
+    estado: Optional[str] = None
+    sinopsis: Optional[str] = None
     serie_created_at: datetime
     serie_updated_at: datetime
 

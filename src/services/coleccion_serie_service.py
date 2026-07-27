@@ -15,7 +15,7 @@ class ColeccionSerieService:
     @staticmethod
     def get_series_from_coleccion(id_coleccion: int, db: Session):
         # Verificar que la colección existe
-        ColeccionService.find_coleccion(id_coleccion, db)  # ← CORREGIDO
+        ColeccionService.find_coleccion(id_coleccion, db)  #
         
         return ColeccionSerieRepository.get_series_from_coleccion(
             id_coleccion=id_coleccion, 
@@ -25,7 +25,7 @@ class ColeccionSerieService:
     @staticmethod
     def find_coleccion_serie(id_coleccion: int, id_serie: int, db: Session):
         # Verificar que la colección y serie existen
-        ColeccionService.find_coleccion(id_coleccion, db)  # ← CORREGIDO
+        ColeccionService.find_coleccion(id_coleccion, db) 
         SerieService.find_serie(id_serie, db)
         
         coleccion_serie = ColeccionSerieRepository.find_coleccion_serie(
@@ -45,7 +45,7 @@ class ColeccionSerieService:
     @staticmethod
     def add_serie_to_coleccion(id_coleccion: int, id_serie: int, dto: ColeccionSerieCreateDTO, db: Session):
         # Verificar que la colección y serie existen
-        ColeccionService.find_coleccion(id_coleccion, db)  # ← CORREGIDO
+        ColeccionService.find_coleccion(id_coleccion, db)  
         SerieService.find_serie(id_serie, db)
         
         # Obtener solo los campos que vienen en el DTO
@@ -69,7 +69,7 @@ class ColeccionSerieService:
     @staticmethod
     def update_serie_in_coleccion(id_coleccion: int, id_serie: int, dto: ColeccionSerieUpdateDTO, db: Session):
         # Verificar que la colección y serie existen
-        ColeccionService.find_coleccion(id_coleccion, db)  # ← CORREGIDO
+        ColeccionService.find_coleccion(id_coleccion, db)  
         SerieService.find_serie(id_serie, db)
         
         # Obtener solo los campos que vienen en el DTO
@@ -94,7 +94,7 @@ class ColeccionSerieService:
     @staticmethod
     def remove_serie_from_coleccion(id_coleccion: int, id_serie: int, db: Session):
         # Verificar que la colección y serie existen
-        ColeccionService.find_coleccion(id_coleccion, db)  # ← CORREGIDO
+        ColeccionService.find_coleccion(id_coleccion, db)  
         SerieService.find_serie(id_serie, db)
         
         result = ColeccionSerieRepository.remove_serie_from_coleccion(

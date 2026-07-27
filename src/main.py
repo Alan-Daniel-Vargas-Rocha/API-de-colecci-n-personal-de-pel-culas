@@ -9,19 +9,35 @@ from src.routes import (
     usuario_apy,
     coleccion_pelicula_apy,
     serie_apy,
-    coleccion_serie
+    coleccion_serie,
+    favoritos_apy
 )
 
-app = FastAPI()
+app = FastAPI(
+    title= "Sistema de catalogo de colecciones de peliculas y series",
+    description= "Esto es un sistema para que el usuario pueda guardar peliculas a su gusto",
+    version= "1.0.0"
+)
+    
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-FRONTEND_DIR = BASE_DIR / "Post"
-
-app.mount("/static", StaticFiles(directory=FRONTEND_DIR / "static"), name="static")
-
-@app.get("/", include_in_schema=False)
-def mostrar_inicio():
-    return FileResponse(FRONTEND_DIR / "templates" / "index.html")
+@app.get("/")
+def read_root():
+    return { "message": "Bienvenido al Sistema de Catálogo de Colecciones",
+        "version": "1.0.0",
+        "documentacion": {
+            "swagger": "/docs",
+            "redoc": "/redoc"
+        },
+        "endpoints": {
+            "peliculas": "/peliculas",
+            "series": "/series",
+            "colecciones": "/colecciones",
+            "coleccion_pelicula": "/coleccion_pelicula",
+            "coleccion_serie": "/coleccion_serie",
+            "usuarios": "/usuarios",
+            "favoritos": "/favoritos"
+            }
+    }
 
 app.include_router(pelicula_apy.router)
 app.include_router(coleccion_apy.router)
@@ -29,3 +45,4 @@ app.include_router(usuario_apy.router)
 app.include_router(coleccion_pelicula_apy.router)
 app.include_router(serie_apy.router)
 app.include_router(coleccion_serie.router)
+app.include_router(favoritos_apy.router)

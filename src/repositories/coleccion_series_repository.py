@@ -14,16 +14,16 @@ class ColeccionSerieRepository:
         return coleccion_series
     
     @staticmethod
-    def find_coleccion_serie(id_coleccion: int, serie_id: int, db: Session):
+    def find_coleccion_serie(id_coleccion: int, id_serie: int, db: Session):  
         """Buscar una relación colección-serie específica"""
         coleccion_serie = db.query(ColeccionSerie).filter(
             ColeccionSerie.id_coleccion == id_coleccion,
-            ColeccionSerie.serie_id == serie_id
+            ColeccionSerie.serie_id == id_serie  
         ).first()
         return coleccion_serie
     
     @staticmethod
-    def add_serie_to_coleccion(id_coleccion: int, serie_id: int, data: dict, db: Session):
+    def add_serie_to_coleccion(id_coleccion: int, id_serie: int, data: dict, db: Session):  
         """Agregar una serie a una colección"""
         # Verificar que la colección existe
         coleccion = db.query(Coleccion).filter(Coleccion.id_coleccion == id_coleccion).first()
@@ -31,14 +31,14 @@ class ColeccionSerieRepository:
             return None
         
         # Verificar que la serie existe
-        serie = db.query(Serie).filter(Serie.id_serie == serie_id).first()
+        serie = db.query(Serie).filter(Serie.id_serie == id_serie).first()  
         if serie is None:
             return None
         
         # Verificar si la serie ya está en la colección
         existing = db.query(ColeccionSerie).filter(
             ColeccionSerie.id_coleccion == id_coleccion,
-            ColeccionSerie.serie_id == serie_id
+            ColeccionSerie.serie_id == id_serie  
         ).first()
         
         if existing is not None:
@@ -47,9 +47,10 @@ class ColeccionSerieRepository:
         # Crear la relación
         coleccion_serie = ColeccionSerie(
             id_coleccion=id_coleccion,
-            serie_id=serie_id,
+            serie_id=id_serie,
             opinion=data.get('opinion'),
-            calificacion=data.get('calificacion')
+            calificacion=data.get('calificacion'),
+            nombre_personalizado=data.get('nombre_personalizado')
         )
         
         db.add(coleccion_serie)
@@ -58,9 +59,9 @@ class ColeccionSerieRepository:
         return coleccion_serie
     
     @staticmethod
-    def update_serie_in_coleccion(id_coleccion: int, serie_id: int, data: dict, db: Session):
+    def update_serie_in_coleccion(id_coleccion: int, id_serie: int, data: dict, db: Session):  
         """Actualizar la relación colección-serie (opinión y calificación)"""
-        coleccion_serie = ColeccionSerieRepository.find_coleccion_serie(id_coleccion, serie_id, db)
+        coleccion_serie = ColeccionSerieRepository.find_coleccion_serie(id_coleccion, id_serie, db)  
         
         if coleccion_serie is None:
             return None
@@ -75,9 +76,9 @@ class ColeccionSerieRepository:
         return coleccion_serie
     
     @staticmethod
-    def remove_serie_from_coleccion(id_coleccion: int, serie_id: int, db: Session):
+    def remove_serie_from_coleccion(id_coleccion: int, id_serie: int, db: Session):  
         """Remover una serie de una colección"""
-        coleccion_serie = ColeccionSerieRepository.find_coleccion_serie(id_coleccion, serie_id, db)
+        coleccion_serie = ColeccionSerieRepository.find_coleccion_serie(id_coleccion, id_serie, db)  
         
         if coleccion_serie is None:
             return None
@@ -87,15 +88,15 @@ class ColeccionSerieRepository:
         return coleccion_serie
     
     @staticmethod
-    def get_serie_details_from_coleccion(id_coleccion: int, serie_id: int, db: Session):
+    def get_serie_details_from_coleccion(id_coleccion: int, id_serie: int, db: Session):  
         """Obtener detalles de una serie específica en una colección"""
-        coleccion_serie = ColeccionSerieRepository.find_coleccion_serie(id_coleccion, serie_id, db)
+        coleccion_serie = ColeccionSerieRepository.find_coleccion_serie(id_coleccion, id_serie, db)  
         
         if coleccion_serie is None:
             return None
         
         # También obtener la información de la serie
-        serie = db.query(Serie).filter(Serie.id_serie == serie_id).first()
+        serie = db.query(Serie).filter(Serie.id_serie == id_serie).first()  
         
         return {
             "coleccion_serie": coleccion_serie,

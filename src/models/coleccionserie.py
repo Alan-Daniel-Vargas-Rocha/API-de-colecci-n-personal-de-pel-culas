@@ -41,6 +41,11 @@ class ColeccionSerie(Base):
         nullable=True
     )
     
+    nombre_personalizado = Column(
+        String(32),
+        nullable=True
+    )
+    
     coleccion_serie_created_at = Column(
         DateTime,
         nullable=False,
