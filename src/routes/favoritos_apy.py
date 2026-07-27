@@ -45,6 +45,7 @@ def get_favoritos_usuario(
     return FavoritoService.get_favoritos_usuario(id_usuario, db)
 
 
+
 @router.get(
     "/usuario/{id_usuario}",
     response_model=List[FavoritoUsuarioResponseDTO],
