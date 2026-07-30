@@ -40,6 +40,7 @@ class UsuarioService:
         data = Usuario(
             nombre=dto.nombre,
             email=dto.email,
+            contraseña=dto.contraseña
           
         )
         

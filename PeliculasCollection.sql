@@ -16,6 +16,8 @@ CREATE TABLE usuario (
     email VARCHAR(30) NOT NULL,
     created_at DATETIME,
     updated_at DATETIME
+    alter table usuario
+    add contraseña varchar(32);
 );
 GO
 

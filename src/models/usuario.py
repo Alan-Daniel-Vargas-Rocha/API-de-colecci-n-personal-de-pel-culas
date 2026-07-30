@@ -24,6 +24,12 @@ class Usuario(Base):
         unique=True
     )
     
+    contraseña = Column(
+        String(32),
+        nullable=False,
+        unique=True
+        )
+    
     created_at = Column(
         DateTime,
         nullable=True

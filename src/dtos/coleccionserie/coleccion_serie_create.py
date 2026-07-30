@@ -7,7 +7,7 @@ class ColeccionSerieCreateDTO(BaseModel):
         ..., 
         description="ID de la colección donde se agregará la serie"
     )
-    serie_id: int = Field(
+    id_serie: int = Field(
         ..., 
         description="ID de la serie del catálogo"
     )
