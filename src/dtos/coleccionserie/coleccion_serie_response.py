@@ -7,7 +7,7 @@ class ColeccionSerieResponseDTO(BaseModel):
     # Datos de la relación
     id_coleccion_serie: int
     id_coleccion: int
-    serie_id: int
+    id_serie: int
     fecha_agregado: datetime
     opinion: Optional[str] = None
     calificacion: Optional[int] = None

@@ -7,7 +7,7 @@ product_data: list[ColeccionPeliculaResponseDTO] = [
 ColeccionPeliculaResponseDTO(
         id_coleccion_pelicula=1,
         id_coleccion=1,
-        pelicula_id=1,
+        id_pelicula=1,
         fecha_agregado=datetime.fromisoformat("2026-05-21T18:45:55+00:00"),
         coleccion_pelicula_created_at=datetime.fromisoformat("2026-05-21T18:45:55+00:00"),
         coleccion_pelicula_update_at=datetime.fromisoformat("2026-05-21T18:45:55+00:00"),
@@ -20,7 +20,7 @@ ColeccionPeliculaResponseDTO(
     ColeccionPeliculaResponseDTO(
         id_coleccion_pelicula=2,
         id_coleccion=1,
-        pelicula_id=2,
+        id_pelicula=2,
         fecha_agregado=datetime.fromisoformat("2026-05-21T19:30:00+00:00"),
         coleccion_pelicula_created_at=datetime.fromisoformat("2026-05-21T19:30:00+00:00"),
         coleccion_pelicula_update_at=datetime.fromisoformat("2026-05-21T19:30:00+00:00"),

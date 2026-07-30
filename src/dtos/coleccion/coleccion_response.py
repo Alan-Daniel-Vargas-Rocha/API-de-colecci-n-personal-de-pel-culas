@@ -10,6 +10,7 @@ class ColeccionResponseDTO(BaseModel):
     nombre : str
     coleccion_created_at: datetime
     coleccion_update_at: datetime
+    activo: Optional[bool]
 
 class Config:
         from_attributes = True

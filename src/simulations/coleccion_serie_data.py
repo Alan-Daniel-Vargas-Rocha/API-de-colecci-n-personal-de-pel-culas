@@ -5,7 +5,7 @@ from src.dtos.coleccionserie.coleccion_serie_response import ColeccionSerieRespo
 coleccion_serie_data: list[ColeccionSerieResponseDTO] = [
     ColeccionSerieResponseDTO(
         id_coleccion_serie=1,
-        serie_id=1,
+        id_serie=1,
         id_coleccion=1,
         fecha_agregado=datetime.fromisoformat("2026-05-21T18:45:55+00:00"),
         opinion='Una de las mejores series de todos los tiempos',
@@ -15,7 +15,7 @@ coleccion_serie_data: list[ColeccionSerieResponseDTO] = [
     ),
     ColeccionSerieResponseDTO(
         id_coleccion_serie=2,
-        serie_id=2,
+        id_serie=2,
         id_coleccion=1,
         fecha_agregado=datetime.fromisoformat("2026-05-21T18:50:55+00:00"),
         opinion='Excelente serie, aunque el final fue controversial',
@@ -25,7 +25,7 @@ coleccion_serie_data: list[ColeccionSerieResponseDTO] = [
     ),
     ColeccionSerieResponseDTO(
         id_coleccion_serie=3,
-        serie_id=3,
+        id_serie=3,
         id_coleccion=2,
         fecha_agregado=datetime.fromisoformat("2026-05-22T10:15:30+00:00"),
         opinion='Perfecta para reír y relajarse',
@@ -35,7 +35,7 @@ coleccion_serie_data: list[ColeccionSerieResponseDTO] = [
     ),
     ColeccionSerieResponseDTO(
         id_coleccion_serie=4,
-        serie_id=4,
+        id_serie=4,
         id_coleccion=2,
         fecha_agregado=datetime.fromisoformat("2026-05-22T11:20:45+00:00"),
         opinion='Muy entretenida, nostalgia de los 80',
@@ -45,7 +45,7 @@ coleccion_serie_data: list[ColeccionSerieResponseDTO] = [
     ),
     ColeccionSerieResponseDTO(
         id_coleccion_serie=5,
-        serie_id=5,
+        id_serie=5,
         id_coleccion=3,
         fecha_agregado=datetime.fromisoformat("2026-05-22T14:30:10+00:00"),
         opinion='Excelente representación histórica',
@@ -55,7 +55,7 @@ coleccion_serie_data: list[ColeccionSerieResponseDTO] = [
     ),
     ColeccionSerieResponseDTO(
         id_coleccion_serie=6,
-        serie_id=1,
+        id_serie=1,
         id_coleccion=3,
         fecha_agregado=datetime.fromisoformat("2026-05-22T15:45:20+00:00"),
         opinion='Obra maestra del cine y la televisión',

@@ -12,7 +12,7 @@ class ColeccionPeliculaResponseDTO(BaseModel):
     
     id_coleccion_pelicula: int
     id_coleccion: int
-    pelicula_id: int
+    id_pelicula: int
     fecha_agregado: datetime
     opinion: Optional[str] = None
     calificacion: Optional[int] = None

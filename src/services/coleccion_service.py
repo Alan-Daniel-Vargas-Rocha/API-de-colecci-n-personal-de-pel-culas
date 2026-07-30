@@ -29,20 +29,17 @@ class ColeccionService:
     @staticmethod
     def create_coleccion(dto: ColeccionCreateDTO, db: Session):
         data = Coleccion()
-        data.id_usuario = dto.id_usuario  # ← Esto debe tener un valor válido
+        data.id_usuario = dto.id_usuario
         data.nombre = dto.nombre
-    #  Las fechas se asignan automáticamente
+        data.activo = True  # Asegurar que se crea como activa
         db.add(data)
         db.commit()
         db.refresh(data)
         return data
-        
-        
     
     @staticmethod
     def update_coleccion(id_coleccion: int, dto: ColeccionUpdateDTO, db: Session):
         # Verificar que la colección existe
-        
         coleccion = ColeccionService.find_coleccion(id_coleccion, db)
         
         # Obtener solo los campos que vienen en el DTO
@@ -61,7 +58,8 @@ class ColeccionService:
     
     @staticmethod
     def delete_coleccion(id_coleccion: int, db: Session):
-        result = ColeccionService.find_coleccion(id_coleccion, db)
+        # Verificar que la colección existe
+        ColeccionService.find_coleccion(id_coleccion, db)
         
         result = ColeccionRepository.delete_coleccion(id_coleccion, db)
         
@@ -72,6 +70,20 @@ class ColeccionService:
             )
         
         return {"message": "Colección eliminada exitosamente"}
+    
+    @staticmethod
+    def restore_coleccion(id_coleccion: int, db: Session):
+        result = ColeccionRepository.restore_coleccion(id_coleccion, db)
+        
+        if result is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Colección no encontrada o ya está activa"
+            )
+        
+        return result
+    
+    # ============ MÉTODOS PARA PELÍCULAS ============
     
     @staticmethod
     def add_pelicula_to_coleccion(id_coleccion: int, pelicula_id: int, db: Session):
@@ -93,6 +105,32 @@ class ColeccionService:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Colección o película no encontrada"
+            )
+        
+        return coleccion
+    
+    # ============ MÉTODOS PARA SERIES ============
+    
+    @staticmethod
+    def add_serie_to_coleccion(id_coleccion: int, id_serie: int, db: Session):
+        coleccion = ColeccionRepository.add_serie_to_coleccion(id_coleccion, id_serie, db)
+        
+        if coleccion is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Colección o serie no encontrada"
+            )
+        
+        return coleccion
+    
+    @staticmethod
+    def remove_serie_from_coleccion(id_coleccion: int, id_serie: int, db: Session):
+        coleccion = ColeccionRepository.remove_serie_from_coleccion(id_coleccion, id_serie, db)
+        
+        if coleccion is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Colección o serie no encontrada"
             )
         
         return coleccion

@@ -18,7 +18,7 @@ class ColeccionSerieRepository:
         """Buscar una relación colección-serie específica"""
         coleccion_serie = db.query(ColeccionSerie).filter(
             ColeccionSerie.id_coleccion == id_coleccion,
-            ColeccionSerie.serie_id == id_serie  
+            ColeccionSerie.id_serie == id_serie  
         ).first()
         return coleccion_serie
     
@@ -38,7 +38,7 @@ class ColeccionSerieRepository:
         # Verificar si la serie ya está en la colección
         existing = db.query(ColeccionSerie).filter(
             ColeccionSerie.id_coleccion == id_coleccion,
-            ColeccionSerie.serie_id == id_serie  
+            ColeccionSerie.id_serie == id_serie  
         ).first()
         
         if existing is not None:
@@ -47,7 +47,7 @@ class ColeccionSerieRepository:
         # Crear la relación
         coleccion_serie = ColeccionSerie(
             id_coleccion=id_coleccion,
-            serie_id=id_serie,
+            id_serie=id_serie,
             opinion=data.get('opinion'),
             calificacion=data.get('calificacion'),
             nombre_personalizado=data.get('nombre_personalizado')

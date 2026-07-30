@@ -46,6 +46,7 @@ def update_coleccion(id_coleccion: int, data: ColeccionUpdateDTO, db: Session = 
 def delete_coleccion(id_coleccion: int, db: Session = Depends(get_db)):
     ColeccionService.delete_coleccion(id_coleccion = id_coleccion, db = db)
 
+
 @router.post("/{id_coleccion}/pelicula/{id_pelicula}", response_model=ColeccionResponseDTO, status_code=status.HTTP_200_OK)
 def add_pelicula_to_coleccion(
     id_coleccion: int, 
@@ -60,6 +61,21 @@ def remove_pelicula_from_coleccion(
     id_pelicula: int, 
     db: Session = Depends(get_db)
 ):
-    return ColeccionService.remove_pelicula_from_coleccion(id_coleccion, id_pelicula, db)
+     return ColeccionService.remove_pelicula_from_coleccion(id_coleccion, id_pelicula, db)
+ 
         
+@router.post("/{id_coleccion}/series/{id_series}", response_model=ColeccionResponseDTO, status_code=status.HTTP_200_OK)
+def add_serie_to_coleccion(
+    id_series: int, 
+    id_coleccion: int, 
+    db: Session = Depends(get_db)
+):
+    return ColeccionService.add_serie_to_coleccion(id_coleccion, id_series, db)
 
+@router.delete("/{id_coleccion}/series/{id_series}", response_model=ColeccionResponseDTO, status_code=status.HTTP_200_OK)
+def remove_serie_from_coleccion(
+    id_coleccion: int, 
+    id_series: int, 
+    db: Session = Depends(get_db)
+):
+    return ColeccionService.remove_serie_from_coleccion(id_coleccion, id_series, db)

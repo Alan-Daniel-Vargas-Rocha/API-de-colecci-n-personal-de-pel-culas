@@ -17,10 +17,10 @@ class ColeccionPeliculaService:
         return ColeccionPeliculaRepository.get_colecciones_peliculas(db=db)
     
     @staticmethod
-    def find_coleccion_pelicula(coleccion_id: int, pelicula_id: int, db: Session):
+    def find_coleccion_pelicula(id_coleccion: int, id_pelicula: int, db: Session):
         coleccion_pelicula = ColeccionPeliculaRepository.find_coleccion_pelicula(
-            coleccion_id = coleccion_id,
-            pelicula_id = pelicula_id,
+            id_coleccion = id_coleccion,
+            id_pelicula = id_pelicula,
             db = db
         )
         
@@ -37,7 +37,7 @@ class ColeccionPeliculaService:
         # Create data
         data = ColeccionPelicula(
             id_coleccion = dto.id_coleccion,
-            pelicula_id = dto.pelicula_id,
+            id_pelicula = dto.id_pelicula,
             fecha_agregado = datetime.now(timezone.utc),
             opinion = dto.opinion,
             calificacion = dto.calificacion,
@@ -49,15 +49,15 @@ class ColeccionPeliculaService:
     
     @staticmethod
     def update_coleccion_pelicula(
-        coleccion_id: int,
-        pelicula_id: int,
+        id_coleccion: int,
+        id_pelicula: int,
         dto: ColeccionPeliculaUpdateDTO,
         db: Session
     ):
     # 1. Buscar la relación
         coleccion_pelicula = ColeccionPeliculaService.find_coleccion_pelicula(
-            coleccion_id=coleccion_id,
-            pelicula_id=pelicula_id,
+            id_coleccion=id_coleccion,
+            id_pelicula=id_pelicula,
             db=db
         )
     
@@ -79,11 +79,11 @@ class ColeccionPeliculaService:
         return coleccion_pelicula
 
     @staticmethod
-    def delete_coleccion_pelicula(coleccion_id: int, pelicula_id: int, db: Session):
+    def delete_coleccion_pelicula(id_coleccion: int, id_pelicula: int, db: Session):
     # Primero buscar el registro existente
         coleccion_pelicula = ColeccionPeliculaService.find_coleccion_pelicula(
-            coleccion_id=coleccion_id,
-            pelicula_id=pelicula_id,
+            id_coleccion=id_coleccion,
+            id_pelicula=id_pelicula,
             db=db
         )
     

@@ -14,7 +14,7 @@ class ColeccionPelicula(Base):
         comment="ID único de la relación colección-película"
     )
     
-    pelicula_id = Column(
+    id_pelicula = Column(
         Integer,
         ForeignKey("pelicula.id_pelicula", ondelete="CASCADE"),
         nullable=False,

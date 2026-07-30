@@ -26,21 +26,21 @@ class ColeccionPeliculaRepository:
         return db.query(ColeccionPelicula).all()
     
     @staticmethod
-    def find_coleccion_pelicula(coleccion_id: int, pelicula_id: int, db: Session):
+    def find_coleccion_pelicula(id_coleccion: int, id_pelicula: int, db: Session):
         """
         Busca una relación colección-película específica.
         
         Args:
-            coleccion_id (int): ID de la colección
-            pelicula_id (int): ID de la película
+            id_coleccion (int): ID de la colección
+            id_pelicula (int): ID de la película
             db (Session): Sesión de SQLAlchemy
             
         Returns:
             ColeccionPelicula: La relación encontrada o None
         """
         coleccion_pelicula = db.query(ColeccionPelicula).filter(
-            ColeccionPelicula.id_coleccion == coleccion_id,
-            ColeccionPelicula.pelicula_id == pelicula_id
+            ColeccionPelicula.id_coleccion == id_coleccion,
+            ColeccionPelicula.id_pelicula == id_pelicula
         ).first()
         return coleccion_pelicula
     
@@ -63,8 +63,8 @@ class ColeccionPeliculaRepository:
     
     @staticmethod
     def update_coleccion_pelicula(
-        coleccion_id: int, 
-        pelicula_id: int, 
+        id_coleccion: int, 
+        id_pelicula: int, 
         update_data: dict, 
         db: Session
     ):
@@ -72,8 +72,8 @@ class ColeccionPeliculaRepository:
         Actualiza una relación colección-película existente.
         
         Args:
-            coleccion_id (int): ID de la colección
-            pelicula_id (int): ID de la película
+            id_coleccion (int): ID de la colección
+            id_pelicula (int): ID de la película
             update_data (dict): Diccionario con los campos a actualizar
             db (Session): Sesión de SQLAlchemy
             
@@ -82,8 +82,8 @@ class ColeccionPeliculaRepository:
         """
         # Buscar la relación
         coleccion_pelicula = ColeccionPeliculaRepository.find_coleccion_pelicula(
-            coleccion_id=coleccion_id,
-            pelicula_id=pelicula_id,
+            id_coleccion=id_coleccion,
+            id_pelicula=id_pelicula,
             db=db
         )
         
@@ -103,21 +103,21 @@ class ColeccionPeliculaRepository:
         return coleccion_pelicula
     
     @staticmethod
-    def delete_coleccion_pelicula(coleccion_id: int, pelicula_id: int, db: Session):
+    def delete_coleccion_pelicula(id_coleccion: int, id_pelicula: int, db: Session):
         """
         Elimina una relación colección-película.
         
         Args:
-            coleccion_id (int): ID de la colección
-            pelicula_id (int): ID de la película
+            id_coleccion (int): ID de la colección
+            id_pelicula (int): ID de la película
             db (Session): Sesión de SQLAlchemy
             
         Returns:
             ColeccionPelicula: La relación eliminada o None
         """
         coleccion_pelicula = ColeccionPeliculaRepository.find_coleccion_pelicula(
-            coleccion_id=coleccion_id,
-            pelicula_id=pelicula_id,
+            id_coleccion=id_coleccion,
+            id_pelicula=id_pelicula,
             db=db
         )
         

@@ -13,7 +13,7 @@ class ColeccionSerie(Base):
         autoincrement=True
     )
     
-    serie_id = Column(
+    id_serie = Column(
         Integer,
         ForeignKey("series.id_serie", ondelete="CASCADE"),
         nullable=False

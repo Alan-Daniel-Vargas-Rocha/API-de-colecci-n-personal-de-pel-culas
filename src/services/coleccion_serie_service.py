@@ -15,7 +15,7 @@ class ColeccionSerieService:
     @staticmethod
     def get_series_from_coleccion(id_coleccion: int, db: Session):
         # Verificar que la colección existe
-        ColeccionService.find_coleccion(id_coleccion, db)  #
+        ColeccionService.find_coleccion(id_coleccion, db)  
         
         return ColeccionSerieRepository.get_series_from_coleccion(
             id_coleccion=id_coleccion, 
