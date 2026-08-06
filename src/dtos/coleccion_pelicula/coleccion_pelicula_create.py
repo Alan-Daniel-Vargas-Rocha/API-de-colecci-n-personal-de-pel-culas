@@ -2,14 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 class ColeccionPeliculaCreateDTO(BaseModel):
-    id_coleccion: int = Field(
-        ..., 
-        description="ID de la colección donde se agregará la película"
-    )
-    pelicula_id: int = Field(
-        ..., 
-        description="ID de la película del catálogo"
-    )
+
     opinion: Optional[str] = Field(
         None, 
         max_length=255,

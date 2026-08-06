@@ -1,129 +1,86 @@
-"""
-Repositorio para manejar las operaciones CRUD de la relación colección-película.
-
-Provee métodos para:
-- Obtener todas las relaciones
-- Buscar una relación específica
-- Crear, actualizar y eliminar relaciones
-"""
 from sqlalchemy.orm import Session
 from src.models.coleccion_pelicula import ColeccionPelicula
+from src.dtos.coleccion_pelicula.coleccion_pelicula_update import ColeccionPeliculaUpdateDTO
 from datetime import datetime, timezone
+from typing import Optional
 
 class ColeccionPeliculaRepository:
     
     @staticmethod
-    def get_colecciones_peliculas(db: Session):
-        """
-        Obtiene todas las relaciones colección-película.
-        
-        Args:
-            db (Session): Sesión de SQLAlchemy
-            
-        Returns:
-            List[ColeccionPelicula]: Lista de todas las relaciones
-        """
-        return db.query(ColeccionPelicula).all()
+    def get_all_colecciones_peliculas(db: Session):
+        return db.query(ColeccionPelicula).filter(ColeccionPelicula.activo == 1).all()
     
     @staticmethod
-    def find_coleccion_pelicula(id_coleccion: int, id_pelicula: int, db: Session):
-        """
-        Busca una relación colección-película específica.
-        
-        Args:
-            id_coleccion (int): ID de la colección
-            id_pelicula (int): ID de la película
-            db (Session): Sesión de SQLAlchemy
-            
-        Returns:
-            ColeccionPelicula: La relación encontrada o None
-        """
-        coleccion_pelicula = db.query(ColeccionPelicula).filter(
+    def get_peliculas_from_coleccion(id_coleccion: int, db: Session):
+        return db.query(ColeccionPelicula).filter(
             ColeccionPelicula.id_coleccion == id_coleccion,
-            ColeccionPelicula.id_pelicula == id_pelicula
-        ).first()
-        return coleccion_pelicula
-    
-    @staticmethod
-    def create_coleccion_pelicula(data: ColeccionPelicula, db: Session):
-        """
-        Crea una nueva relación colección-película.
-        
-        Args:
-            data (ColeccionPelicula): Datos de la relación a crear
-            db (Session): Sesión de SQLAlchemy
-            
-        Returns:
-            ColeccionPelicula: La relación creada
-        """
-        db.add(data)
-        db.commit()
-        db.refresh(data)
-        return data
+            ColeccionPelicula.activo == 1
+        ).all()
     
     @staticmethod
     def update_coleccion_pelicula(
-        id_coleccion: int, 
-        id_pelicula: int, 
-        update_data: dict, 
+        id_coleccion: int,
+        id_pelicula: int,
+        dto: ColeccionPeliculaUpdateDTO,
         db: Session
     ):
-        """
-        Actualiza una relación colección-película existente.
-        
-        Args:
-            id_coleccion (int): ID de la colección
-            id_pelicula (int): ID de la película
-            update_data (dict): Diccionario con los campos a actualizar
-            db (Session): Sesión de SQLAlchemy
-            
-        Returns:
-            ColeccionPelicula: La relación actualizada o None
-        """
-        # Buscar la relación
-        coleccion_pelicula = ColeccionPeliculaRepository.find_coleccion_pelicula(
-            id_coleccion=id_coleccion,
-            id_pelicula=id_pelicula,
-            db=db
-        )
-        
-        if coleccion_pelicula is None:
+        """Actualizar una relación (prepara, no hace commit)"""
+        coleccion_pelicula = ColeccionPeliculaRepository.find_coleccion_pelicula(id_coleccion, id_pelicula, db)
+        if not coleccion_pelicula:
             return None
+
+        if dto.opinion is not None:
+            coleccion_pelicula.opinion = dto.opinion
+        if dto.calificacion is not None:
+            coleccion_pelicula.calificacion = dto.calificacion
+        if dto.nombre_personalizado is not None:
+            coleccion_pelicula.nombre_personalizado = dto.nombre_personalizado
         
-        # Actualizar solo los campos proporcionados
-        for key, value in update_data.items():
-            if hasattr(coleccion_pelicula, key):
-                setattr(coleccion_pelicula, key, value)
-        
-        # Actualizar timestamp automáticamente
         coleccion_pelicula.coleccion_pelicula_update_at = datetime.now(timezone.utc)
-        
-        db.commit()
-        db.refresh(coleccion_pelicula)
+        db.flush()
         return coleccion_pelicula
     
     @staticmethod
-    def delete_coleccion_pelicula(id_coleccion: int, id_pelicula: int, db: Session):
-        """
-        Elimina una relación colección-película.
-        
-        Args:
-            id_coleccion (int): ID de la colección
-            id_pelicula (int): ID de la película
-            db (Session): Sesión de SQLAlchemy
-            
-        Returns:
-            ColeccionPelicula: La relación eliminada o None
-        """
-        coleccion_pelicula = ColeccionPeliculaRepository.find_coleccion_pelicula(
+    def find_coleccion_pelicula(id_coleccion: int, id_pelicula: int, db: Session):
+        return db.query(ColeccionPelicula).filter(
+            ColeccionPelicula.id_coleccion == id_coleccion,
+            ColeccionPelicula.id_pelicula == id_pelicula,
+            ColeccionPelicula.activo == 1
+        ).first()
+    
+    @staticmethod
+    def add_pelicula_to_coleccion(
+        id_coleccion: int,
+        id_pelicula: int,
+        opinion: Optional[str],
+        calificacion: Optional[int],
+        nombre_personalizado: Optional[str],
+        db: Session
+    ):
+        """Crear relación película-colección"""
+        data = ColeccionPelicula(
             id_coleccion=id_coleccion,
             id_pelicula=id_pelicula,
-            db=db
+            fecha_agregado=datetime.now(timezone.utc),
+            opinion=opinion,
+            calificacion=calificacion,
+            nombre_personalizado=nombre_personalizado,
+            coleccion_pelicula_created_at=datetime.now(timezone.utc),
+            coleccion_pelicula_update_at=datetime.now(timezone.utc),
+            activo=1
         )
-        
-        if coleccion_pelicula is None:
+        db.add(data)
+        db.flush()
+        return data
+    
+    @staticmethod
+    def delete_coleccion_pelicula(id_coleccion: int, id_pelicula: int, db: Session):
+        """Soft delete: marcar como inactiva (prepara, no hace commit)"""
+        coleccion_pelicula = ColeccionPeliculaRepository.find_coleccion_pelicula(id_coleccion, id_pelicula, db)
+        if not coleccion_pelicula:
             return None
         
-        db.delete(coleccion_pelicula)
-        db.commit()
+        coleccion_pelicula.activo = 0
+        coleccion_pelicula.coleccion_pelicula_update_at = datetime.now(timezone.utc)
+        db.flush()
         return coleccion_pelicula

@@ -1,81 +1,79 @@
 from fastapi import APIRouter, Depends
-
 from starlette import status
-
 from typing import List
-
 from sqlalchemy.orm import Session
 
 from src.services.coleccion_service import ColeccionService
 from src.dtos.coleccion.coleccion_create import ColeccionCreateDTO
 from src.dtos.coleccion.coleccion_response import ColeccionResponseDTO
-from src.dtos.coleccion.coleccion_update import  ColeccionUpdateDTO
+from src.dtos.coleccion.coleccion_update import ColeccionUpdateDTO
 from src.config.database import get_db
-
 
 # Import router
 router = APIRouter(
-    prefix = "/colecciones",
-    tags = ["Colecciones"],
-    )
-
-# Create CRUD
-@router.get(
-    "/",
-    response_model = List[ColeccionResponseDTO],
-    status_code = status.HTTP_200_OK
+    prefix="/colecciones",
+    tags=["Colecciones"],
 )
 
-@router.get("/", response_model=List[ColeccionResponseDTO], status_code=status.HTTP_200_OK)
+# ============================================
+# 1️⃣ GET: Listar todas las colecciones# ============================================
+@router.get(
+    "/",
+    response_model=List[ColeccionResponseDTO],
+    status_code=status.HTTP_200_OK
+)
 def get_colecciones(db: Session = Depends(get_db)):
     return ColeccionService.get_colecciones(db=db)
 
-@router.get("/{id_coleccion}", response_model = ColeccionResponseDTO, status_code = status.HTTP_200_OK)
+# ============================================
+# 2️⃣ GET: Obtener una colección específica
+# ============================================
+@router.get(
+    "/{id_coleccion}",
+    response_model=ColeccionResponseDTO,
+    status_code=status.HTTP_200_OK
+)
 def find_coleccion(id_coleccion: int, db: Session = Depends(get_db)):
-    return ColeccionService.find_coleccion(id_coleccion = id_coleccion, db = db)
+    return ColeccionService.find_coleccion(id_coleccion=id_coleccion, db=db)
 
-@router.post("/", response_model = ColeccionResponseDTO, status_code = status.HTTP_201_CREATED)
+# ============================================
+# 3️⃣ POST: Crear una nueva colección
+# ============================================
+@router.post(
+    "/",
+    response_model=ColeccionResponseDTO,
+    status_code=status.HTTP_201_CREATED
+)
 def create_coleccion(data: ColeccionCreateDTO, db: Session = Depends(get_db)):
-    return ColeccionService.create_coleccion(dto = data, db = db)
+    return ColeccionService.create_coleccion(dto=data, db=db)
 
-@router.put("/{id_coleccion}", response_model = ColeccionResponseDTO, status_code = status.HTTP_202_ACCEPTED)
-def update_coleccion(id_coleccion: int, data: ColeccionUpdateDTO, db: Session = Depends(get_db)):
-    return ColeccionService.update_coleccion(id_coleccion = id_coleccion, dto = data, db = db)
+# ============================================
+# 4️⃣ PUT: Actualizar una colección
+# ============================================
+@router.put(
+    "/{id_coleccion}",
+    response_model=ColeccionResponseDTO,
+    status_code=status.HTTP_202_ACCEPTED
+)
+def update_coleccion(
+    id_coleccion: int,
+    data: ColeccionUpdateDTO,
+    db: Session = Depends(get_db)
+):
+    return ColeccionService.update_coleccion(
+        id_coleccion=id_coleccion,
+        dto=data,
+        db=db
+    )
 
-@router.delete("/{id_coleccion}", status_code = status.HTTP_204_NO_CONTENT)
+# ============================================
+# 5️⃣ DELETE: Eliminar una colección (soft delete)
+# ============================================
+@router.delete(
+    "/{id_coleccion}",
+    status_code=status.HTTP_204_NO_CONTENT
+)
 def delete_coleccion(id_coleccion: int, db: Session = Depends(get_db)):
-    ColeccionService.delete_coleccion(id_coleccion = id_coleccion, db = db)
+    ColeccionService.delete_coleccion(id_coleccion=id_coleccion, db=db)
+    return None
 
-
-@router.post("/{id_coleccion}/pelicula/{id_pelicula}", response_model=ColeccionResponseDTO, status_code=status.HTTP_200_OK)
-def add_pelicula_to_coleccion(
-    id_coleccion: int, 
-    id_pelicula: int, 
-    db: Session = Depends(get_db)
-):
-    return ColeccionService.add_pelicula_to_coleccion(id_coleccion, id_pelicula, db)
-
-@router.delete("/{id_coleccion}/pelicula/{id_pelicula}", response_model=ColeccionResponseDTO, status_code=status.HTTP_200_OK)
-def remove_pelicula_from_coleccion(
-    id_coleccion: int, 
-    id_pelicula: int, 
-    db: Session = Depends(get_db)
-):
-     return ColeccionService.remove_pelicula_from_coleccion(id_coleccion, id_pelicula, db)
- 
-        
-@router.post("/{id_coleccion}/series/{id_series}", response_model=ColeccionResponseDTO, status_code=status.HTTP_200_OK)
-def add_serie_to_coleccion(
-    id_series: int, 
-    id_coleccion: int, 
-    db: Session = Depends(get_db)
-):
-    return ColeccionService.add_serie_to_coleccion(id_coleccion, id_series, db)
-
-@router.delete("/{id_coleccion}/series/{id_series}", response_model=ColeccionResponseDTO, status_code=status.HTTP_200_OK)
-def remove_serie_from_coleccion(
-    id_coleccion: int, 
-    id_series: int, 
-    db: Session = Depends(get_db)
-):
-    return ColeccionService.remove_serie_from_coleccion(id_coleccion, id_series, db)

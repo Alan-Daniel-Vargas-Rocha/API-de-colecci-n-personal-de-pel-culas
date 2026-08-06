@@ -1,112 +1,113 @@
 from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
 from starlette import status
 from sqlalchemy.orm import Session
-from datetime import datetime, timezone
-
 from src.dtos.coleccionserie.coleccion_serie_create import ColeccionSerieCreateDTO
 from src.dtos.coleccionserie.coleccion_serie_update import ColeccionSerieUpdateDTO
-from src.models.coleccionserie import ColeccionSerie  
 from src.repositories.coleccion_series_repository import ColeccionSerieRepository
-from src.services.coleccion_service import ColeccionService 
-from src.services.serie_service import SerieService
 
 class ColeccionSerieService:
     
     @staticmethod
+    def get_all_colecciones_series(db: Session):
+        """Obtener todas las relaciones colección-serie (global)"""
+        return ColeccionSerieRepository.get_all_colecciones_series(db=db)
+    
+    
+    @staticmethod
     def get_series_from_coleccion(id_coleccion: int, db: Session):
-        # Verificar que la colección existe
-        ColeccionService.find_coleccion(id_coleccion, db)  
-        
-        return ColeccionSerieRepository.get_series_from_coleccion(
-            id_coleccion=id_coleccion, 
-            db=db
-        )
+        return ColeccionSerieRepository.get_series_from_coleccion(id_coleccion, db)
     
     @staticmethod
     def find_coleccion_serie(id_coleccion: int, id_serie: int, db: Session):
-        # Verificar que la colección y serie existen
-        ColeccionService.find_coleccion(id_coleccion, db) 
-        SerieService.find_serie(id_serie, db)
-        
         coleccion_serie = ColeccionSerieRepository.find_coleccion_serie(
-            id_coleccion=id_coleccion, 
-            id_serie=id_serie, 
-            db=db
+            id_coleccion, id_serie, db
         )
-        
         if not coleccion_serie:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Relación colección-serie no encontrada"
-            )
-        
+            raise HTTPException(404, "Relación colección-serie no encontrada")
         return coleccion_serie
     
     @staticmethod
-    def add_serie_to_coleccion(id_coleccion: int, id_serie: int, dto: ColeccionSerieCreateDTO, db: Session):
-        # Verificar que la colección y serie existen
-        ColeccionService.find_coleccion(id_coleccion, db)  
-        SerieService.find_serie(id_serie, db)
+    def add_serie_to_coleccion(
+        id_coleccion: int,
+        id_serie: int,
+        dto: ColeccionSerieCreateDTO,
+        db: Session
+    ):
+        # Validar que no exista
+        existe = ColeccionSerieRepository.find_coleccion_serie(id_coleccion, id_serie, db)
+        if existe:
+            raise HTTPException(400, "Esta serie ya está en la colección")
         
-        # Obtener solo los campos que vienen en el DTO
-        data = dto.dict(exclude_unset=True)
-        
-        coleccion_serie = ColeccionSerieRepository.add_serie_to_coleccion(
-            id_coleccion=id_coleccion,
-            id_serie=id_serie,
-            data=data,
-            db=db
-        )
-        
-        if coleccion_serie is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Colección o serie no encontrada"
+        try:
+            nuevo = ColeccionSerieRepository.add_serie_to_coleccion(
+                id_coleccion=id_coleccion,
+                id_serie=id_serie,
+                opinion=dto.opinion,
+                calificacion=dto.calificacion,
+                nombre_personalizado=dto.nombre_personalizado,
+                db=db
             )
-        
-        return coleccion_serie
+            db.commit()
+            db.refresh(nuevo)
+            return nuevo
+        except IntegrityError:
+            db.rollback()
+            raise HTTPException(400, "La relación ya existe en el sistema.")
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(500, f"Error interno: {str(e)}")
     
     @staticmethod
-    def update_serie_in_coleccion(id_coleccion: int, id_serie: int, dto: ColeccionSerieUpdateDTO, db: Session):
-        # Verificar que la colección y serie existen
-        ColeccionService.find_coleccion(id_coleccion, db)  
-        SerieService.find_serie(id_serie, db)
-        
-        # Obtener solo los campos que vienen en el DTO
-        update_data = dto.dict(exclude_unset=True)
-        
-        # Actualizar la relación
-        updated_coleccion_serie = ColeccionSerieRepository.update_serie_in_coleccion(
-            id_coleccion=id_coleccion,
-            id_serie=id_serie,
-            data=update_data,
-            db=db
-        )
-        
-        if updated_coleccion_serie is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Relación colección-serie no encontrada"
+    def update_serie_in_coleccion(
+        id_coleccion: int,
+        id_serie: int,
+        dto: ColeccionSerieUpdateDTO,
+        db: Session
+    ):
+        """Actualizar una relación colección-serie"""
+        try:
+            # Verificar que existe
+            ColeccionSerieService.find_coleccion_serie(id_coleccion, id_serie, db)
+            
+            # Delegar al repositorio
+            updated = ColeccionSerieRepository.update_serie_in_coleccion(
+                id_coleccion=id_coleccion,
+                id_serie=id_serie,
+                dto=dto,
+                db=db
             )
+            
+            if updated is None:
+                raise HTTPException(404, "Relación no encontrada")
+            
+            db.commit()
+            db.refresh(updated)
+            return updated
+        except HTTPException:
+            raise
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(400, f"No se pudo actualizar: {str(e)}")
         
-        return updated_coleccion_serie
-    
     @staticmethod
-    def remove_serie_from_coleccion(id_coleccion: int, id_serie: int, db: Session):
-        # Verificar que la colección y serie existen
-        ColeccionService.find_coleccion(id_coleccion, db)  
-        SerieService.find_serie(id_serie, db)
+    def delete_coleccion_serie(id_coleccion: int, id_serie: int, db: Session):
+        """ Escritura: con transacción"""
+        # Verificar que existe
+        ColeccionSerieService.find_coleccion_serie(id_coleccion, id_serie, db)
         
-        result = ColeccionSerieRepository.remove_serie_from_coleccion(
-            id_coleccion=id_coleccion,
-            id_serie=id_serie,
-            db=db
-        )
-        
-        if result is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Relación colección-serie no encontrada"
+        try:
+            result = ColeccionSerieRepository.delete_coleccion_serie(
+                id_coleccion, id_serie, db
             )
-        
-        return {"message": "Serie removida de la colección exitosamente"}
+            
+            if result is None:
+                raise HTTPException(404, "Relación no encontrada")
+            
+            db.commit()
+            return {"message": "Serie removida exitosamente"}
+        except HTTPException:
+            raise
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(400, f"No se pudo eliminar: {str(e)}")

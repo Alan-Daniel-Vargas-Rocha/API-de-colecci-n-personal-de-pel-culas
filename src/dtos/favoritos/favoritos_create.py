@@ -6,10 +6,6 @@ from typing import Optional
 
 class FavoritoCreateDTO(BaseModel):
     
-    id_usuario: int = Field(
-        ..., 
-        description="ID del usuario que marca el favorito"
-    )
     tipo: str = Field(
         ..., 
         pattern="^(pelicula|serie)$",

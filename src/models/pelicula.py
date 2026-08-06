@@ -41,6 +41,13 @@ class Pelicula(Base):
         onupdate=datetime.now(timezone.utc)
     )
     
+    activo = Column(
+        Integer,
+        nullable=False,
+        default=1,
+        comment="Indica si la relación está activa (1) o inactiva (0)"
+    )
+    
     # Relación con ColeccionPelicula
     coleccion_peliculas = relationship(
         "ColeccionPelicula",

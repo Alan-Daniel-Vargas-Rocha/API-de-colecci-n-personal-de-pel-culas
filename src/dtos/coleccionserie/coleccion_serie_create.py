@@ -3,14 +3,9 @@ from typing import Optional
 
 # DTO para agregar una serie a una colección
 class ColeccionSerieCreateDTO(BaseModel):
-    id_coleccion: int = Field(
-        ..., 
-        description="ID de la colección donde se agregará la serie"
-    )
-    id_serie: int = Field(
-        ..., 
-        description="ID de la serie del catálogo"
-    )
+
+
+    
     opinion: Optional[str] = Field(
         None, 
         max_length=255,

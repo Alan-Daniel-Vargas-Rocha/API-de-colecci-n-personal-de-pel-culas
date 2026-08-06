@@ -14,6 +14,7 @@ class ColeccionSerieResponseDTO(BaseModel):
     nombre_personalizado: Optional[str] = None
     coleccion_serie_created_at: datetime
     coleccion_serie_update_at: datetime
+    activo: int 
     
     # Datos de la serie (del catálogo)
     titulo: Optional[str] = None

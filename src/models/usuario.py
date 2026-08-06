@@ -40,6 +40,13 @@ class Usuario(Base):
         nullable=True
     )
     
+    activo = Column(
+        Integer,
+        nullable=False,
+        default=1,
+        comment="Indica si la relación está activa (1) o inactiva (0)"
+    )
+    
     # Relación con colecciones
     colecciones = relationship("Coleccion", back_populates="usuario", cascade="all, delete-orphan")
     favoritos = relationship("Favorito", back_populates="usuario")  

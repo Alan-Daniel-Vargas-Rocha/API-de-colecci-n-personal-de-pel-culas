@@ -30,11 +30,9 @@ router = APIRouter(
 # ==================== ENDPOINTS ====================
 
 @router.get(
-    "/usuario/{id_usuario}",
+    "/",
     response_model=List[FavoritoResponseDTO],
-    status_code=status.HTTP_200_OK,
-    summary="Listar favoritos de un usuario",
-    description="Obtiene todos los favoritos de un usuario específico."
+    status_code=status.HTTP_200_OK
 )
 def get_favoritos_usuario(
     id_usuario: int,
@@ -43,8 +41,6 @@ def get_favoritos_usuario(
     """Obtener favoritos de un usuario (formato técnico)."""
     logger.info(f"GET /favoritos/usuario/{id_usuario}")
     return FavoritoService.get_favoritos_usuario(id_usuario, db)
-
-
 
 @router.get(
     "/usuario/{id_usuario}",

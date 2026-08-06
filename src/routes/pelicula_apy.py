@@ -39,3 +39,7 @@ def create_pelicula(data: PeliculaCreateDTO, db: Session = Depends(get_db)):
 def update_pelicula(id_pelicula: int, data: PeliculaUpdateDTO, db: Session = Depends(get_db)):
     return PeliculaService.update_pelicula(id_pelicula=id_pelicula, dto=data, db=db)
 
+
+@router.delete("/{id_pelicula}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_pelicula(id_pelicula: int, db: Session = Depends(get_db)):
+    PeliculaService.delete_pelicula(id_pelicula=id_pelicula, db=db)

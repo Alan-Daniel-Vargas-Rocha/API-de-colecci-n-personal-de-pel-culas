@@ -58,7 +58,13 @@ class ColeccionSerie(Base):
         default=datetime.now(timezone.utc),
         onupdate=datetime.now(timezone.utc)
     )
-    
+    activo = Column(
+        Integer,
+        nullable=False,
+        default=1,
+        comment="Indica si la relación está activa (1) o inactiva (0)"
+    )
+        
     # Relaciones
     serie = relationship("Serie", back_populates="coleccion_series")
     coleccion = relationship("Coleccion", back_populates="coleccion_series")

@@ -2,96 +2,145 @@
 Repositorio para manejar las operaciones CRUD de favoritos.
 """
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
 from src.models.favoritos import Favorito
 from src.models.pelicula import Pelicula
 from src.models.series import Serie
-from src.utils.logger import setup_logger
-
-logger = setup_logger("favorito_repository")
+from src.dtos.favoritos.favoritos_create import FavoritoCreateDTO
+from src.dtos.favoritos.favoritos_response import FavoritoResponseDTO
+from src.dtos.favoritos.favoritos_usuario_response import FavoritoUsuarioResponseDTO
+from datetime import datetime, timezone
 
 class FavoritoRepository:
+    
+    #  LECTURAS
     
     @staticmethod
     def get_favoritos_usuario(id_usuario: int, db: Session):
         """Obtener todos los favoritos de un usuario."""
-        logger.debug(f"Obteniendo favoritos del usuario ID: {id_usuario}")
-        return db.query(Favorito).filter(
+        favoritos = db.query(Favorito).filter(
             Favorito.id_usuario == id_usuario
         ).all()
+        
+        return [
+            FavoritoResponseDTO(
+                id_favorito=f.id_favorito,
+                id_usuario=f.id_usuario,
+                tipo=f.tipo,
+                id_item=f.id_item,
+                fecha_agregado=f.fecha_agregado
+            )
+            for f in favoritos
+        ]
     
     @staticmethod
-    def get_favoritos_peliculas(id_usuario: int, db: Session):
-        """Obtener favoritos de tipo película de un usuario."""
-        logger.debug(f"Obteniendo películas favoritas del usuario ID: {id_usuario}")
-        return db.query(Favorito).filter(
-            Favorito.id_usuario == id_usuario,
-            Favorito.tipo == "pelicula"
+    def get_favoritos_usuario_amigable(id_usuario: int, db: Session):
+        """Obtener favoritos de un usuario con datos de la película/serie."""
+        favoritos = db.query(Favorito).filter(
+            Favorito.id_usuario == id_usuario
         ).all()
-    
-    @staticmethod
-    def get_favoritos_series(id_usuario: int, db: Session):
-        """Obtener favoritos de tipo serie de un usuario."""
-        logger.debug(f"Obteniendo series favoritas del usuario ID: {id_usuario}")
-        return db.query(Favorito).filter(
-            Favorito.id_usuario == id_usuario,
-            Favorito.tipo == "serie"
-        ).all()
+        
+        resultado = []
+        for fav in favoritos:
+            if fav.tipo == "pelicula":
+                pelicula = db.query(Pelicula).filter(
+                    Pelicula.id_pelicula == fav.id_item
+                ).first()
+                if pelicula:
+                    resultado.append(
+                        FavoritoUsuarioResponseDTO(
+                            id_favorito=fav.id_favorito,
+                            tipo="pelicula",
+                            titulo=pelicula.titulo,
+                            genero=pelicula.genero,
+                            año=pelicula.año,
+                            fecha_agregado=fav.fecha_agregado
+                        )
+                    )
+            elif fav.tipo == "serie":
+                serie = db.query(Serie).filter(
+                    Serie.id_serie == fav.id_item
+                ).first()
+                if serie:
+                    resultado.append(
+                        FavoritoUsuarioResponseDTO(
+                            id_favorito=fav.id_favorito,
+                            tipo="serie",
+                            titulo=serie.titulo,
+                            genero=serie.genero,
+                            año_inicio=serie.año_inicio,
+                            año_fin=serie.año_fin,
+                            fecha_agregado=fav.fecha_agregado
+                        )
+                    )
+        
+        return resultado
     
     @staticmethod
     def find_favorito(id_usuario: int, tipo: str, id_item: int, db: Session):
         """Buscar un favorito específico."""
-        logger.debug(f"Buscando favorito: usuario={id_usuario}, tipo={tipo}, item={id_item}")
-        return db.query(Favorito).filter(
+        favorito = db.query(Favorito).filter(
             Favorito.id_usuario == id_usuario,
             Favorito.tipo == tipo,
             Favorito.id_item == id_item
         ).first()
+        
+        if not favorito:
+            return None
+        
+        return FavoritoResponseDTO(
+            id_favorito=favorito.id_favorito,
+            id_usuario=favorito.id_usuario,
+            tipo=favorito.tipo,
+            id_item=favorito.id_item,
+            fecha_agregado=favorito.fecha_agregado
+        )
     
     @staticmethod
     def find_favorito_by_id(id_favorito: int, db: Session):
-        """Buscar un favorito por su ID."""
-        logger.debug(f"Buscando favorito ID: {id_favorito}")
+        """Buscar un favorito por ID."""
         return db.query(Favorito).filter(
             Favorito.id_favorito == id_favorito
         ).first()
     
+    # CREATE
+    
     @staticmethod
-    def create_favorito(data: Favorito, db: Session):
+    def create_favorito(dto: FavoritoCreateDTO, db: Session):
         """Crear un nuevo favorito."""
-        logger.info(f"Creando favorito: usuario={data.id_usuario}, tipo={data.tipo}, item={data.id_item}")
+        data = Favorito(
+            id_usuario=dto.id_usuario,
+            tipo=dto.tipo,
+            id_item=dto.id_item,
+            fecha_agregado=datetime.now(timezone.utc)
+        )
+        
         db.add(data)
-        db.commit()
-        db.refresh(data)
-        logger.info(f"Favorito creado: ID={data.id_favorito}")
+        db.flush()  
+        
         return data
+    
+    #  DELETE
     
     @staticmethod
     def delete_favorito(id_favorito: int, db: Session):
-        """Eliminar un favorito."""
-        logger.warning(f"Eliminando favorito ID: {id_favorito}")
-        
+        """Eliminar un favorito por ID."""
         favorito = FavoritoRepository.find_favorito_by_id(id_favorito, db)
-        if favorito is None:
-            logger.warning(f"Favorito no encontrado: ID={id_favorito}")
+        
+        if not favorito:
             return None
         
         db.delete(favorito)
-        db.commit()
-        logger.warning(f"Favorito eliminado: ID={id_favorito}")
-        return favorito
+        db.flush()  
+        return True
     
     @staticmethod
     def delete_favorito_by_item(id_usuario: int, tipo: str, id_item: int, db: Session):
         """Eliminar un favorito por usuario, tipo e item."""
-        logger.warning(f"Eliminando favorito: usuario={id_usuario}, tipo={tipo}, item={id_item}")
-        
         favorito = FavoritoRepository.find_favorito(id_usuario, tipo, id_item, db)
-        if favorito is None:
-            logger.warning(f"Favorito no encontrado: usuario={id_usuario}, tipo={tipo}, item={id_item}")
+        
+        if not favorito:
             return None
         
         db.delete(favorito)
-        db.commit()
-        logger.warning(f"Favorito eliminado: usuario={id_usuario}, tipo={tipo}, item={id_item}")
-        return favorito
+        db.flush()  
+        return True

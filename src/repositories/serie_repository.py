@@ -1,64 +1,90 @@
 from sqlalchemy.orm import Session
+from src.dtos.series.series_create import SerieCreateDTO
+from src.dtos.series.series_update import SerieUpdateDTO
 from src.models.series import Serie
-from src.utils.logger import setup_logger
-
-logger = setup_logger("serie_repository")
+from datetime import datetime, timezone
 
 class SerieRepository:
     
     @staticmethod
     def get_series(db: Session):
-        """Obtener todas las series del catálogo."""
-        logger.debug("Obteniendo todas las series")
-        return db.query(Serie).all()
+        return db.query(Serie).filter(Serie.activo == 1).all()
     
     @staticmethod
     def find_serie(id_serie: int, db: Session):
-        """Buscar una serie por ID."""
-        logger.debug(f"Buscando serie con ID: {id_serie}")
+        return db.query(Serie).filter(
+            Serie.id_serie == id_serie,
+            Serie.activo == 1
+        ).first()
+    
+    @staticmethod
+    def find_serie_including_inactive(id_serie: int, db: Session):
         return db.query(Serie).filter(Serie.id_serie == id_serie).first()
     
     @staticmethod
-    def create_serie(data: Serie, db: Session):
-        """Crear una nueva serie en el catálogo."""
-        logger.info(f"Creando serie: {data.titulo}")
+    def create_serie(dto: SerieCreateDTO, db: Session):
+        data = Serie(
+            titulo=dto.titulo,
+            año_inicio=dto.año_inicio,
+            año_fin=dto.año_fin,
+            genero=dto.genero,
+            temporadas=dto.temporadas,
+            episodios=dto.episodios,
+            sinopsis=dto.sinopsis,
+            estado=dto.estado,
+            serie_created_at=datetime.now(timezone.utc),
+            serie_updated_at=datetime.now(timezone.utc),
+            activo=1
+        )
         db.add(data)
-        db.commit()
-        db.refresh(data)
-        logger.info(f"Serie creada: ID={data.id_serie}")
+        db.flush()
         return data
     
     @staticmethod
-    def update_serie(id_serie: int, update_data: dict, db: Session):
-        """Actualizar una serie existente."""
-        logger.info(f"Actualizando serie ID: {id_serie}")
-        
+    def update_serie(id_serie: int, dto: SerieUpdateDTO, db: Session):
         serie = SerieRepository.find_serie(id_serie, db)
-        if serie is None:
-            logger.warning(f"Serie no encontrada: ID={id_serie}")
+        if not serie:
             return None
         
-        for key, value in update_data.items():
-            if hasattr(serie, key):
-                setattr(serie, key, value)
-                logger.debug(f"Campo actualizado: {key} = {value}")
+        if dto.titulo is not None:
+            serie.titulo = dto.titulo
+        if dto.año_inicio is not None:
+            serie.año_inicio = dto.año_inicio
+        if dto.año_fin is not None:
+            serie.año_fin = dto.año_fin
+        if dto.genero is not None:
+            serie.genero = dto.genero
+        if dto.temporadas is not None:
+            serie.temporadas = dto.temporadas
+        if dto.episodios is not None:
+            serie.episodios = dto.episodios
+        if dto.sinopsis is not None:
+            serie.sinopsis = dto.sinopsis
+        if dto.estado is not None:
+            serie.estado = dto.estado
         
-        db.commit()
-        db.refresh(serie)
-        logger.info(f"Serie actualizada: ID={id_serie}")
+        serie.serie_updated_at = datetime.now(timezone.utc)
+        db.flush()
         return serie
     
     @staticmethod
     def delete_serie(id_serie: int, db: Session):
-        """Eliminar una serie del catálogo."""
-        logger.warning(f"Eliminando serie ID: {id_serie}")
-        
         serie = SerieRepository.find_serie(id_serie, db)
-        if serie is None:
-            logger.warning(f"Serie no encontrada: ID={id_serie}")
+        if not serie:
             return None
         
-        db.delete(serie)
-        db.commit()
-        logger.warning(f"Serie eliminada: ID={id_serie}")
+        serie.activo = 0
+        serie.serie_updated_at = datetime.now(timezone.utc)
+        db.flush()
+        return serie
+    
+    @staticmethod
+    def restore_serie(id_serie: int, db: Session):
+        serie = SerieRepository.find_serie_including_inactive(id_serie, db)
+        if not serie or serie.activo == 1:
+            return None
+        
+        serie.activo = 1
+        serie.serie_updated_at = datetime.now(timezone.utc)
+        db.flush()
         return serie
