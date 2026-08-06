@@ -38,10 +38,24 @@ class Serie(Base):
         nullable=True
     )
     
+    episodios = Column(
+        Integer,
+        nullable=True
+    )
+    
     serie_created_at = Column(
         DateTime,
         nullable=False,
         default=datetime.now(timezone.utc)
+    )
+    sinopsis = Column(
+        String(32),
+        nullable=True
+    )
+    
+    estado = Column(
+        String(20),
+        nullable=True
     )
     
     serie_updated_at = Column(

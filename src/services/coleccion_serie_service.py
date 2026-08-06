@@ -1,6 +1,5 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
-from starlette import status
 from sqlalchemy.orm import Session
 from src.dtos.coleccionserie.coleccion_serie_create import ColeccionSerieCreateDTO
 from src.dtos.coleccionserie.coleccion_serie_update import ColeccionSerieUpdateDTO
@@ -12,7 +11,6 @@ class ColeccionSerieService:
     def get_all_colecciones_series(db: Session):
         """Obtener todas las relaciones colección-serie (global)"""
         return ColeccionSerieRepository.get_all_colecciones_series(db=db)
-    
     
     @staticmethod
     def get_series_from_coleccion(id_coleccion: int, db: Session):
@@ -34,7 +32,7 @@ class ColeccionSerieService:
         dto: ColeccionSerieCreateDTO,
         db: Session
     ):
-        # Validar que no exista
+        # Validación preventiva fuera del bloque de escritura
         existe = ColeccionSerieRepository.find_coleccion_serie(id_coleccion, id_serie, db)
         if existe:
             raise HTTPException(400, "Esta serie ya está en la colección")
@@ -66,26 +64,21 @@ class ColeccionSerieService:
         db: Session
     ):
         """Actualizar una relación colección-serie"""
+        ColeccionSerieService.find_coleccion_serie(id_coleccion, id_serie, db)
+        
         try:
-            # Verificar que existe
-            ColeccionSerieService.find_coleccion_serie(id_coleccion, id_serie, db)
-            
-            # Delegar al repositorio
             updated = ColeccionSerieRepository.update_serie_in_coleccion(
                 id_coleccion=id_coleccion,
                 id_serie=id_serie,
                 dto=dto,
                 db=db
             )
-            
             if updated is None:
                 raise HTTPException(404, "Relación no encontrada")
             
             db.commit()
             db.refresh(updated)
             return updated
-        except HTTPException:
-            raise
         except Exception as e:
             db.rollback()
             raise HTTPException(400, f"No se pudo actualizar: {str(e)}")
@@ -93,21 +86,17 @@ class ColeccionSerieService:
     @staticmethod
     def delete_coleccion_serie(id_coleccion: int, id_serie: int, db: Session):
         """ Escritura: con transacción"""
-        # Verificar que existe
         ColeccionSerieService.find_coleccion_serie(id_coleccion, id_serie, db)
         
         try:
             result = ColeccionSerieRepository.delete_coleccion_serie(
                 id_coleccion, id_serie, db
             )
-            
             if result is None:
                 raise HTTPException(404, "Relación no encontrada")
             
             db.commit()
             return {"message": "Serie removida exitosamente"}
-        except HTTPException:
-            raise
         except Exception as e:
             db.rollback()
             raise HTTPException(400, f"No se pudo eliminar: {str(e)}")

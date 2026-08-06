@@ -36,8 +36,9 @@ class ColeccionRepository:
     
     @staticmethod
     def update_coleccion(id_coleccion: int, dto: ColeccionUpdateDTO, db: Session):
-        coleccion = ColeccionRepository.find_coleccion(id_coleccion, db)
-        if not coleccion:
+       
+        coleccion = db.get(Coleccion, id_coleccion)
+        if not coleccion or coleccion.activo == 0:
             return None
         
         if dto.nombre is not None:
@@ -49,8 +50,8 @@ class ColeccionRepository:
     
     @staticmethod
     def delete_coleccion(id_coleccion: int, db: Session):
-        coleccion = ColeccionRepository.find_coleccion(id_coleccion, db)
-        if not coleccion:
+        coleccion = db.get(Coleccion, id_coleccion)
+        if not coleccion or coleccion.activo == 0:
             return None
         
         coleccion.activo = 0

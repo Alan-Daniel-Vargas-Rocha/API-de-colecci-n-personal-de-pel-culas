@@ -24,8 +24,14 @@ class ColeccionPeliculaRepository:
         dto: ColeccionPeliculaUpdateDTO,
         db: Session
     ):
-        """Actualizar una relación (prepara, no hace commit)"""
-        coleccion_pelicula = ColeccionPeliculaRepository.find_coleccion_pelicula(id_coleccion, id_pelicula, db)
+        """Actualizar una relación optimizada usando la caché de la sesión"""
+        # Al usar .filter en el servicio, SQLAlchemy ya tiene guardada esta entidad en memoria
+        coleccion_pelicula = db.query(ColeccionPelicula).filter(
+            ColeccionPelicula.id_coleccion == id_coleccion,
+            ColeccionPelicula.id_pelicula == id_pelicula,
+            ColeccionPelicula.activo == 1
+        ).first() #  si ya se consultó antes, no repite el viaje a la BD.
+        
         if not coleccion_pelicula:
             return None
 

@@ -31,7 +31,7 @@ class SerieCreateDTO(BaseModel):
         ge=1, 
         description="Número de temporadas"
     )
-    episodios: Optional[int] = Field(  # ← CORREGIDO: int, no str
+    episodios: Optional[int] = Field( 
         None, 
         ge=1, 
         description="Número total de episodios"
